@@ -116,7 +116,7 @@ ce script sera executé à la fin du processus de renouvellement de certbot
 # cat renew_cert.sh 
 #!/bin/bash
 
-SERVER="192.168.0.151 192.168.0.152 192.168.0.153"
+SERVER="PROXMOX01 PROXMOX02 PROXMOX03 PROXMOX04 PROXMOX05"
 DEBUG=1
 
 ## ---- DO NOT CHANGE AFTER HERE
@@ -157,16 +157,16 @@ fi
 
 debug "Copy cert file to local proxmox pveproxy and restart it"
 
-/bin/cp /etc/letsencrypt/live/vargas.one/fullchain.pem /etc/pve/local/pve-ssl.pem 
-/bin/cp /etc/letsencrypt/live/vargas.one/privkey.pem /etc/pve/local/pve-ssl.key 
+/bin/cp /etc/letsencrypt/live/domain.ltd/fullchain.pem /etc/pve/local/pve-ssl.pem 
+/bin/cp /etc/letsencrypt/live/domain.ltd/privkey.pem /etc/pve/local/pve-ssl.key 
 /bin/systemctl restart pveproxy
 
 debug "Servers to renew cert : $SERVER :"
 
 for i in $SERVER; do
     debug "Server : $i :"
-    /usr/bin/scp -i /root/.ssh/id_rsa -q /etc/letsencrypt/live/vargas.one/fullchain.pem root@$i:/etc/pve/local/pve-ssl.pem
-    /usr/bin/scp -i /root/.ssh/id_rsa -q /etc/letsencrypt/live/vargas.one/privkey.pem root@$i:/etc/pve/local/pve-ssl.key
+    /usr/bin/scp -i /root/.ssh/id_rsa -q /etc/letsencrypt/live/domain.ltd/fullchain.pem root@$i:/etc/pve/local/pve-ssl.pem
+    /usr/bin/scp -i /root/.ssh/id_rsa -q /etc/letsencrypt/live/domain.ltd/privkey.pem root@$i:/etc/pve/local/pve-ssl.key
     /usr/bin/ssh -i /root/.ssh/id_rsa -q root@$i "systemctl restart pveproxy"
 done
 
@@ -176,7 +176,7 @@ debug "done"
 ### entrée la crontab suivante avec un crontab -e
 
 ```
-37 5 1,15 * * cd /opt/eff.org/certbot/venv/bin/ && ./certbot renew --post-hook /opt/vargas.scripts/renew_cert.sh
+37 5 1,15 * * cd /opt/eff.org/certbot/venv/bin/ && ./certbot renew --post-hook /opt/scripts/renew_cert.sh
 ```
 
 ### modification de votre fichier /etc/hosts
